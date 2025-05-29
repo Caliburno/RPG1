@@ -1,4 +1,4 @@
-package org.example.demo1;
+package org.example.demo1.app;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -11,6 +11,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.text.Text;
+import org.example.demo1.factory.EnemyFactory;
+import org.example.demo1.entity.component.HealthComponent;
+import org.example.demo1.entity.Tipo;
 
 
 public class MainGame extends GameApplication {
@@ -44,31 +47,7 @@ public class MainGame extends GameApplication {
         FXGL.spawn("enemy", 900, 200);
         FXGL.spawn("enemy", 1000, 400);
 
-        Rectangle bgBar = new Rectangle(104, 24, Color.DARKGRAY);
-        Rectangle hpBar = new Rectangle(100, 20, Color.LIMEGREEN);
-        Text hpTxt = new Text();
 
-        hpBar.setTranslateX(12);
-        hpBar.setTranslateY(12);
-        bgBar.setTranslateY(10);
-        bgBar.setTranslateX(10);
-        hpTxt.setTranslateX(30);
-        hpTxt.setTranslateY(26);
-        hpTxt.setFill(Color.BLACK);
-        hpTxt.setFont(Font.font(14));
-
-        FXGL.getGameScene().addUINode(bgBar);
-        FXGL.getGameScene().addUINode(hpBar);
-        FXGL.getGameScene().addUINode(hpTxt);
-
-
-        HealthComponent hp = player.getComponent(HealthComponent.class);
-
-        FXGL.getGameTimer().runAtInterval(() -> {
-            double ratio = hp.getHp() / (double) hp.getMaxHp();
-            hpBar.setWidth(100 * ratio);
-            hpTxt.setText(hp.getHp() + " / " + hp.getMaxHp());
-        }, Duration.millis(100));
     }
 
     public Entity getPlayer(){
@@ -98,6 +77,35 @@ public class MainGame extends GameApplication {
                 moving = false;
             }
         }
+    }
+
+    @Override
+    protected void initUI() {
+        Rectangle bgBar = new Rectangle(104, 24, Color.DARKGRAY);
+        Rectangle hpBar = new Rectangle(100, 20, Color.LIMEGREEN);
+        Text hpTxt = new Text();
+
+        hpBar.setTranslateX(12);
+        hpBar.setTranslateY(12);
+        bgBar.setTranslateY(10);
+        bgBar.setTranslateX(10);
+        hpTxt.setTranslateX(30);
+        hpTxt.setTranslateY(26);
+        hpTxt.setFill(Color.BLACK);
+        hpTxt.setFont(Font.font(14));
+
+        FXGL.getGameScene().addUINode(bgBar);
+        FXGL.getGameScene().addUINode(hpBar);
+        FXGL.getGameScene().addUINode(hpTxt);
+
+
+        HealthComponent hp = player.getComponent(HealthComponent.class);
+
+        FXGL.getGameTimer().runAtInterval(() -> {
+            double ratio = hp.getHp() / (double) hp.getMaxHp();
+            hpBar.setWidth(100 * ratio);
+            hpTxt.setText(hp.getHp() + " / " + hp.getMaxHp());
+        }, Duration.millis(100));
     }
 
     private void onDeath() {

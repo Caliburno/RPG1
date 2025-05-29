@@ -1,4 +1,4 @@
-package org.example.demo1;
+package org.example.demo1.entity.component;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
@@ -39,7 +39,7 @@ public class HealthComponent extends Component {
 
     private void onDeath() {
         FXGL.getDialogService().showMessageBox("Game Over", () -> {
-            FXGL.getGameController().startNewGame(); // reinicia todo
+            FXGL.getGameController().startNewGame();
         });
         // Notar: el entity.removeFromWorld() no va acá porque se pierde antes del cartel
     }

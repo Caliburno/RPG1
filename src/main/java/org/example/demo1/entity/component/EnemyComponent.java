@@ -1,29 +1,10 @@
-package org.example.demo1;
+package org.example.demo1.entity.component;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.EntityFactory;
-import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.component.Component;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
-public class EnemyFactory implements EntityFactory {
-
-    @Spawns("enemy")
-    public Entity newEnemy(SpawnData data) {
-        return FXGL.entityBuilder(data)
-                .viewWithBBox(new Rectangle(40, 40, Color.BLUE))
-                .type(Tipo.ENEMY)
-                .collidable()
-                .with(new EnemyComponent(FXGL.<MainGame>getAppCast().getPlayer()))
-                .build();
-    }
-}
-
-class EnemyComponent extends Component {
+public class EnemyComponent extends Component {
 
     private final Entity objetivo;
     private final double speed = 100;
@@ -52,8 +33,8 @@ class EnemyComponent extends Component {
             attackTimer = 0;
 
             HealthComponent hp = objetivo.getComponent(HealthComponent.class);
-            if (hp  != null) {
-                hp.damage(3);
+            if (hp != null) {
+                hp.damage(10);
                 System.out.println("+10 damage");
                 System.out.println("Current health: " + hp.getHp());
             }
