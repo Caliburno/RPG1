@@ -4,6 +4,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.input.UserAction;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -11,17 +12,15 @@ import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.text.Text;
-import org.example.demo1.factory.EnemyFactory;
+import org.example.demo1.entity.component.PlayerComponent;
+import org.example.demo1.factory.EntityFactory;
 import org.example.demo1.entity.component.HealthComponent;
-import org.example.demo1.entity.Tipo;
-
+import org.example.demo1.entity.Type;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
 
 public class MainGame extends GameApplication {
 
     private Entity player;
-    private double targetX, targetY;
-    private boolean moving = false;
-    private final double SPEED = 150;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -33,21 +32,13 @@ public class MainGame extends GameApplication {
 
     @Override
     protected void initGame() {
+        FXGL.getGameWorld().addEntityFactory(new EntityFactory());
 
-        player = FXGL.entityBuilder()
-                .at(300, 300)
-                .viewWithBBox(new Rectangle(40, 40, Color.RED))
-                .type(Tipo.PLAYER)
-                .collidable()
-                .with(new HealthComponent(100, 100))
-                .buildAndAttach();
+        player = FXGL.spawn("player", 300, 300);
 
-        FXGL.getGameWorld().addEntityFactory(new EnemyFactory());
         FXGL.spawn("enemy", 800, 300);
         FXGL.spawn("enemy", 900, 200);
         FXGL.spawn("enemy", 1000, 400);
-
-
     }
 
     public Entity getPlayer(){
@@ -56,27 +47,14 @@ public class MainGame extends GameApplication {
 
     @Override
     protected void  initInput() {
-        FXGL.onBtnDown(MouseButton.PRIMARY, () -> {
-            Point2D click = FXGL.getInput().getMousePositionWorld();
-            targetX = click.getX();
-            targetY = click.getY();
-            moving = true;
-        });
-    }
 
-    @Override
-    protected void onUpdate(double tpf) {
-        if (moving) {
-            Point2D dir = new Point2D(targetX, targetY)
-                    .subtract(player.getCenter())
-                    .normalize();
-
-            player.translate(dir.multiply((SPEED * tpf)));
-
-            if (player.getCenter().distance(targetX, targetY) < 4) {
-                moving = false;
+        getInput().addAction(new UserAction("Click Move") {
+            @Override
+            protected void onActionBegin() {
+                Point2D worldPoint = getInput().getMousePositionWorld();
+                player.getComponent(PlayerComponent.class).moveTo(worldPoint.getX(), worldPoint.getY());
             }
-        }
+        }, MouseButton.PRIMARY);
     }
 
     @Override
@@ -106,12 +84,6 @@ public class MainGame extends GameApplication {
             hpBar.setWidth(100 * ratio);
             hpTxt.setText(hp.getHp() + " / " + hp.getMaxHp());
         }, Duration.millis(100));
-    }
-
-    private void onDeath() {
-        FXGL.getDialogService().showMessageBox("Game Over", () -> {
-            FXGL.getGameController().startNewGame();
-        });
     }
 
     public static void main(String[] args) {

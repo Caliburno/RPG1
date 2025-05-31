@@ -1,4 +1,4 @@
-package org.example.demo1.ui;
+package org.example.demo1.ui.HUI;
 
 import com.almasb.fxgl.entity.Entity;
 import javafx.scene.layout.HBox;
